@@ -1,0 +1,86 @@
+-- OPEX UI Framework Example
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+-- 1. Create the Main Screen Container
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "OPEX_Menu"
+ScreenGui.Parent = CoreGui -- Places the UI over the game screen
+
+-- 2. Create the Main Window Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 350, 0, 250)
+MainFrame.Position = UDim2.new(0.5, -175, 0.4, -125)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true -- Allows the user to move the menu around
+MainFrame.Parent = ScreenGui
+
+-- 3. Top Title Bar
+local TitleBar = Instance.new("TextLabel")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 35)
+TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleBar.Text = "  OPEX Control Panel"
+TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleBar.TextXAlignment = Enum.TextXAlignment.Left
+TitleBar.Font = Enum.Font.SourceSansBold
+TitleBar.TextSize = 18
+TitleBar.Parent = MainFrame
+
+-- 4. Content Area (Where buttons go)
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -45)
+ContentFrame.Position = UDim2.new(0, 10, 0, 40)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = MainFrame
+
+-- 5. Automatic Layout Arranger
+-- This automatically stacks buttons vertically with 5-pixel spacing
+local ListLayout = Instance.new("UIListLayout")
+ListLayout.Parent = ContentFrame
+ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ListLayout.Padding = UDim.new(0, 5)
+
+-- 6. Function to easily add arranged buttons
+local function createMenuButton(text, callback)
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1, 0, 0, 30)
+    Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Button.Text = text
+    Button.TextColor3 = Color3.fromRGB(230, 230, 230)
+    Button.Font = Enum.Font.SourceSans
+    Button.TextSize = 16
+    Button.BorderSizePixel = 0
+    Button.Parent = ContentFrame
+    
+    -- Visual Feedback on Hover
+    Button.MouseEnter:Connect(function()
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+    end)
+    Button.MouseLeave:Connect(function()
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+    end)
+    
+    -- Trigger the action when clicked
+    Button.MouseButton1Click:Connect(callback)
+end
+
+-- 7. Populate the Arranged UI with sample toggles
+createMenuButton("Reset Graphic Settings", function()
+    print("OPEX: Resetting environment visuals...")
+end)
+
+createMenuButton("Toggle Performance Overlay", function()
+    print("OPEX: Displaying performance diagnostics.")
+end)
+
+createMenuButton("Print Player Coordinates", function()
+    local lp = game.Players.LocalPlayer
+    if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        print("Current Position: " .. tostring(lp.Character.HumanoidRootPart.Position))
+    end
+end)
